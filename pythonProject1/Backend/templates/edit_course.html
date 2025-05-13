@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Редактировать курс</title>
+</head>
+<body>
+    <h1>Редактировать курс</h1>
+    <form method="POST">
+        <label>Название:</label><br>
+        <input type="text" name="name" value="{{ course.name }}"><br><br>
+        <label>Описание:</label><br>
+        <input type="text" name="description" value="{{ course.description }}"><br><br>
+        <button type="submit">Сохранить</button>
+    </form>
+    <a href="{{ url_for('courses_page') }}">Назад к списку</a>
+</body>
+</html>

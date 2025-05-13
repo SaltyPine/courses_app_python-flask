@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Курсы</title>
+</head>
+<body>
+    <h1>Курсы</h1>
+    <p>Вы вошли как: <strong>{{ username }}</strong></p>
+
+    <!-- Форма фильтрации -->
+    <form method="get" action="{{ url_for('courses_page') }}">
+        <input type="text" name="filter_name" placeholder="Фильтр по имени" value="{{ request.args.get('filter_name', '') }}">
+        <input type="text" name="filter_description" placeholder="Фильтр по описанию" value="{{ request.args.get('filter_description', '') }}">
+        <button type="submit">Фильтровать</button>
+    </form>
+
+    <ul>
+        {% for course in courses %}
+            <li>
+                <strong>{{ course.name }}</strong>: {{ course.description }}
+
+                {% if username == 'admin' %}
+                    <!-- Кнопка удаления -->
+                    <form method="POST" action="{{ url_for('delete_course', id=course.id) }}" style="display:inline;">
+                        <button type="submit">Удалить</button>
+                    </form>
+
+                    <!-- Кнопка редактирования -->
+                    <a href="{{ url_for('edit_course_page', id=course.id) }}">Редактировать</a>
+                {% endif %}
+            </li>
+        {% else %}
+            <li>Курсы не найдены.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Пагинация -->
+    <div>
+        {% if page > 1 %}
+            <a href="{{ url_for('courses_page', page=page-1, filter_name=request.args.get('filter_name', ''), filter_description=request.args.get('filter_description', '')) }}">Назад</a>
+        {% endif %}
+
+        <span>Страница {{ page }} из {{ total_pages }}</span>
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('courses_page', page=page+1, filter_name=request.args.get('filter_name', ''), filter_description=request.args.get('filter_description', '')) }}">Вперёд</a>
+        {% endif %}
+    </div>
+
+    <!-- Форма добавления курса (только для admin) -->
+    {% if username == 'admin' %}
+        <h2>Добавить новый курс</h2>
+        <form method="POST" action="{{ url_for('courses_page') }}">
+            <input type="text" name="name" placeholder="Название" required>
+            <input type="text" name="description" placeholder="Описание" required>
+            <button type="submit">Добавить</button>
+        </form>
+    {% endif %}
+
+    <br>
+    <a href="{{ url_for('logout') }}">Выйти</a>
+</body>
+</html>
